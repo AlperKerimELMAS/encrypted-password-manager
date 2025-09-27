@@ -1,6 +1,6 @@
 // id structure is an obligation for multi-account. PasswordList should be updated, the struct as well.
 
-#include "encryption.h"
+#include "password.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,14 +9,12 @@
 // These keys and shufflePattern should be stored in an array or linked list!
 // key[0] stores id for sitename
 
-char *randomKeyGenerator(int id, int length)
+int *randomKeyGenerator(int length)
 {
     srand(time(NULL));
-    char *key = (char *)calloc(length + 1, sizeof(char));
-    key[0] = id;
-
+    int *key = (int *)calloc(length, sizeof(int));
     int i;
-    for (i = 1; i < length + 1; i++)
+    for (i = 0; i < length; i++)
         key[i] = rand() % 127 + 1;
 
     return key;
@@ -24,9 +22,7 @@ char *randomKeyGenerator(int id, int length)
 
 int *randomShufflePatternGenerator(int length)
 {
-    int i;
-    int randomIndex;
-    int tempNumber;
+    int i, randomIndex, tempNumber;
 
     int *pattern = (int *)calloc(length, sizeof(int));
     for (i = 0; i < length; i++)
@@ -43,10 +39,9 @@ int *randomShufflePatternGenerator(int length)
     return pattern;
 }
 
-char *strEncryption(int key, int id, char *str)
+char *strEncryption(int id, char *str, int *keyForID, int *shufflePattern)
 {
     int length = strlen(str);
-    char *keyForID = randomKeyGenerator(id, length);
 
     char *encryptedStr = (char *)calloc(length + 1, sizeof(char));
     int i;
@@ -57,7 +52,6 @@ char *strEncryption(int key, int id, char *str)
 
     char *encryptedStrShuffled = (char *)calloc(length + 1, sizeof(char));
 
-    int *shufflePattern = randomShufflePatternGenerator(length);
     for (i = 0; i < length; i++)
         encryptedStrShuffled[i] = encryptedStr[shufflePattern[i]];
 

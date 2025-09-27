@@ -1,4 +1,4 @@
-#include "decryption.h"
+#include "password.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

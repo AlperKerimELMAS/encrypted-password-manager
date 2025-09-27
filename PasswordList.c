@@ -3,25 +3,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "password.h"
 
-struct passwordLog
-{
-    char siteName[10];
-    char siteURL[30];
-    char encryptedUsername[30];
-    char encryptedPassword[30];
-    struct passwordLog *nextLog;
-};
-
-void insert(struct passwordLog **firstLog, char *siteName, char *siteURL, char *encryptedUsername, char *encryptedPassword)
+void insert(struct passwordLog **firstLog, int id, char *siteName, char *siteURL, char *encryptedUsername, char *encryptedPassword, int *keyForID, int *shufflePattern)
 {
     struct passwordLog *newLog = (struct passwordLog *)malloc(sizeof(struct passwordLog));
     if (newLog != NULL)
     {
+        newLog->id = id;
         strcpy(newLog->siteName, siteName);
         strcpy(newLog->siteURL, siteURL);
         strcpy(newLog->encryptedUsername, encryptedUsername);
         strcpy(newLog->encryptedPassword, encryptedPassword);
+        newLog->keyForID = keyForID;
+        newLog->shufflePattern = shufflePattern;
         newLog->nextLog = NULL;
 
         struct passwordLog *previousLog = NULL;
@@ -48,9 +43,9 @@ void insert(struct passwordLog **firstLog, char *siteName, char *siteURL, char *
         puts("Memory allocation failed, no memory available.");
 }
 
-void delete(struct passwordLog **firstLog, char *siteName)
+void delete(struct passwordLog **firstLog, int id)
 {
-    if (strcmp((*firstLog)->siteName, siteName) == 0)
+    if ((*firstLog)->id == id)
     {
         struct passwordLog *temp = *firstLog;
         *firstLog = (*firstLog)->nextLog;
@@ -62,7 +57,7 @@ void delete(struct passwordLog **firstLog, char *siteName)
         struct passwordLog *previousLog = *firstLog;
         struct passwordLog *currentLog = (*firstLog)->nextLog;
 
-        while (currentLog != NULL && strcmp(currentLog->siteName, siteName) != 0)
+        while (currentLog != NULL && currentLog->id != id)
         {
             previousLog = currentLog;
             currentLog = currentLog->nextLog;
@@ -81,7 +76,7 @@ void delete(struct passwordLog **firstLog, char *siteName)
         }
     }
 
-    printf("%s log is deleted from the Password Manager.", siteName);
+    printf("Log is deleted from the Password Manager.");
 }
 
 void printRequestedLog(struct passwordLog *firstLog, char *siteName)
