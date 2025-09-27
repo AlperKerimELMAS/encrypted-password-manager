@@ -1,10 +1,24 @@
 #include <stdio.h>
+#include <string.h>
+#include "password.h"
 
 void mainMenu();
 void passwordGenerationMenu();
 
 int main(void)
 {
+    struct passwordLog *firstLog = NULL;
+    static int id = 0;
+    char siteName[10];
+    char siteURL[30];
+    char username[30];
+    char password[30];
+    int *keyForID;
+    int *shufflePattern;
+
+    char encryptedUsername[30];
+    char encryptedPassword[30];
+
     int mainMenuChoice;
     int passwordGenerationChoice;
     int passwordGenerationFeatures[6];
@@ -22,6 +36,29 @@ int main(void)
         switch (mainMenuChoice)
         {
         case 1:
+            printf("Enter the name of the site: ");
+            scanf("%9s", siteName);
+
+            printf("Enter the URL of the site: ");
+            scanf("%29s", siteURL);
+
+            printf("Enter the username:");
+            scanf("%29s", username);
+
+            printf("Enter the password: ");
+            scanf("%29s", password);
+
+            int *keyForID = randomKeyGenerator(strlen(password));
+            int *shufflePattern = randomShufflePatternGenerator(strlen(password));
+
+            strcpy(encryptedPassword, strEncryption(id, password, keyForID, shufflePattern));
+
+            insert(&firstLog, id, siteName, siteURL, username, encryptedPassword, keyForID, shufflePattern);
+            id++;
+
+            free(keyForID);
+            free(shufflePattern);
+            break;
         case 2:
         case 3:
             passwordGenerationMenu();
