@@ -1,4 +1,3 @@
-// NOT FINISHED, especially readArray function
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,11 +27,9 @@ int *readArray(char *array, int length) // To obtain actual form of key and patt
     return originalArray;
 }
 
-char *readData(char *path) // readData is not returned yet, a proper way will be found to make it as less static as possible
+void readData(struct passwordLog **firstLog, char *path) // to update database when the program starts
 {
-    char *readData;
 
-    struct passwordLog *firstLog = NULL;
     FILE *fPtr = fopen(path, "r");
     int id;
     char siteName[10];
@@ -50,7 +47,7 @@ char *readData(char *path) // readData is not returned yet, a proper way will be
             fscanf(fPtr, "%d - %s(%s) - %s - %s - %s - %s", &id, siteName, siteURL, encryptedUsername, encryptedPassword, keyForIDWritten, shufflePatternWritten);
             keyForID = readArray(keyForIDWritten, strlen(encryptedPassword));
             shufflePattern = readArray(shufflePatternWritten, strlen(encryptedPassword));
-            insert(&firstLog, id, siteName, siteURL, encryptedUsername, encryptedPassword, keyForID, shufflePattern);
+            insert(*firstLog, id, siteName, siteURL, encryptedUsername, encryptedPassword, keyForID, shufflePattern);
         }
 
         fclose(fPtr);

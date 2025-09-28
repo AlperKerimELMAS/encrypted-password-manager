@@ -1,13 +1,8 @@
-// id structure is an obligation for multi-account. PasswordList should be updated, the struct as well.
-
 #include "password.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-// These keys and shufflePattern should be stored in an array or linked list!
-// key[0] stores id for sitename
 
 int *randomKeyGenerator(int length)
 {

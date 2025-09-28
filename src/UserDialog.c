@@ -1,3 +1,5 @@
+// how to assign id is still not done!
+
 #include <stdio.h>
 #include <string.h>
 #include "password.h"
@@ -20,6 +22,8 @@ int main(void)
     char encryptedPassword[30];
 
     int mainMenuChoice;
+    int passwordMenuChoice;
+    char siteChoice[10];
     int passwordGenerationChoice;
     int passwordGenerationFeatures[6];
     char *passwordFeatureNames[6] = {"Length? ", "Digits included? ", "Letters included? ",
@@ -60,6 +64,23 @@ int main(void)
             free(shufflePattern);
             break;
         case 2:
+            printf("Password Menu Choice (1 - Print a single log, 2 - Print all logs): ");
+            scanf("%d", &passwordMenuChoice);
+            switch (passwordMenuChoice)
+            {
+            case 1:
+                printf("Enter the name of the site: ");
+                scanf("%9s", siteChoice);
+                printRequestedLog(firstLog, siteChoice);
+                break;
+            case 2:
+                printWholeLogAdmin(firstLog);
+                break;
+            default:
+                puts("Wrong input!");
+                break;
+            }
+            break;
         case 3:
             passwordGenerationMenu();
             printf("Choice input: ");
@@ -85,6 +106,8 @@ int main(void)
             }
             break;
         case 4:
+            printf("Go to \"%s\" to contibute!\n", "github.com/AlperKerimELMAS/encrypted-password-manager");
+            break;
         case 9:
             mainMenu();
             break;
