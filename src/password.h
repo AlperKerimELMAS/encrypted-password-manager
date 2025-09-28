@@ -26,4 +26,9 @@ int *randomShufflePatternGenerator(int length);
 char *strDecryption(int *key, int *shufflePattern, int id, char *str);
 char *deshuffler(char *str, int length, int *shufflePattern);
 
+char *writeArray(int *array, int length);
+int *readArray(char *array, int length);
+void readData(struct passwordLog **firstLog, char *path);
+void writeData(char *path, struct passwordLog *firstLog);
+
 #endif
