@@ -3,13 +3,22 @@
 #include <string.h>
 #include "password.h"
 
-char *writeArray(int *array, int length) //  They will be written as characters locally
+int numberOfLogs = 0;
+int numberOfWritten = 0;
+
+char *writeArray(int *array, int length)
 {
     char *string = (char *)malloc(sizeof(char) * (length + 3));
+    if (string == NULL)
+    {
+        puts("Memory allocation failed!");
+        return NULL;
+    }
+
     string[0] = '[';
     int i;
 
-    for (i = 0; i < length + 1; i++)
+    for (i = 0; i < length; i++)
         string[i + 1] = (char)array[i];
 
     string[length + 1] = ']';
@@ -17,48 +26,57 @@ char *writeArray(int *array, int length) //  They will be written as characters 
     return string;
 }
 
-int *readArray(char *array, int length) // To obtain actual form of key and pattern
+int *readArray(char *array, int length)
 {
     int *originalArray = (int *)malloc(sizeof(int) * length);
+    if (originalArray == NULL)
+    {
+        puts("Memory allocation failed!");
+        return NULL;
+    }
     int i;
     for (i = 0; i < length; i++)
-        originalArray[i] = (int)array[i + 1];
+        originalArray[i] = (int)(unsigned char)array[i + 1];
 
     return originalArray;
 }
 
-void readData(struct passwordLog **firstLog, char *path) // to update database when the program starts
+void readData(struct passwordLog **firstLog, const char *path)
 {
-
     FILE *fPtr = fopen(path, "r");
+    if (fPtr == NULL)
+    {
+        puts("First installation mode activated - no password logs found!\n");
+        numberOfLogs = 10;
+        return;
+    }
     int id;
     char siteName[10];
     char siteURL[30];
     char encryptedUsername[30];
     char encryptedPassword[30];
-    char keyForIDWritten[30];
-    char shufflePatternWritten[30];
+    char keyForIDWritten[35];
+    char shufflePatternWritten[35];
     int *keyForID;
     int *shufflePattern;
-    if (fPtr != NULL)
+    while (1)
     {
-        while (!feof(fPtr))
-        {
-            fscanf(fPtr, "%d - %s(%s) - %s - %s - %s - %s", &id, siteName, siteURL, encryptedUsername, encryptedPassword, keyForIDWritten, shufflePatternWritten);
-            keyForID = readArray(keyForIDWritten, strlen(encryptedPassword));
-            shufflePattern = readArray(shufflePatternWritten, strlen(encryptedPassword));
-            insert(*firstLog, id, siteName, siteURL, encryptedUsername, encryptedPassword, keyForID, shufflePattern);
-        }
-
-        fclose(fPtr);
+        int fetch = fscanf(fPtr, "%d - %s(%s) - %s - %s - %s - %s", &id, siteName, siteURL, encryptedUsername, encryptedPassword, keyForIDWritten, shufflePatternWritten);
+        if (fetch != 7 || fetch == EOF)
+            break;
+        keyForID = readArray(keyForIDWritten, strlen(encryptedPassword));
+        shufflePattern = readArray(shufflePatternWritten, strlen(encryptedPassword));
+        insert(firstLog, id, siteName, siteURL, encryptedUsername, encryptedPassword, keyForID, shufflePattern);
+        numberOfLogs++;
     }
-    else
-        puts("readData failed!");
+
+    fclose(fPtr);
+    printf("%d password logs are loaded!", numberOfLogs);
 }
 
 void writeData(char *path, struct passwordLog *firstLog)
 {
-    FILE *fPtr = fopen(path, "a");
+    FILE *fPtr = fopen(path, "w");
     int length;
 
     if (fPtr != NULL)
@@ -68,8 +86,10 @@ void writeData(char *path, struct passwordLog *firstLog)
             length = strlen(firstLog->encryptedPassword);
             fprintf(fPtr, "%d - %s(%s) - %s - %s - %s - %s\n", firstLog->id, firstLog->siteName, firstLog->siteURL, firstLog->encryptedUsername, firstLog->encryptedPassword, writeArray(firstLog->keyForID, length), writeArray(firstLog->shufflePattern, length));
             firstLog = firstLog->nextLog;
+            numberOfWritten++;
         }
         fclose(fPtr);
+        print("%d logs successfully written to %s file", numberOfWritten, path);
     }
 
     else

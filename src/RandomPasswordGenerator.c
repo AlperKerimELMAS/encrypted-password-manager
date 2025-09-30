@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include "password.h"
 
 char *passwordGenerator(int passwordGenerationFeatures[])
 {
@@ -12,45 +12,60 @@ char *passwordGenerator(int passwordGenerationFeatures[])
     int qLowercase = passwordGenerationFeatures[4];
     int qUpperCase = passwordGenerationFeatures[5];
 
-    char randDigit, randSpecialChar, randLowercase, randUppercase;
+    if (length <= 0 || length > 30)
+    {
+        printf("Length is invalid, 1-30 number of characters are supported!\n");
+        return NULL;
+    }
+    if (!(qDigit || qLetter || qSpecialChar))
+    {
+        printf("At least one character type must be selected!\n");
+        return NULL;
+    }
+    if (!qLetter || qUpperCase || qLowercase == 0)
+    {
+        qUpperCase = 1;
+        qLowercase = 1;
+    }
 
     char *generatedPassword = (char *)calloc(length + 1, sizeof(char));
-    int i;
-
-    // if the letter is selected, lowercase and uppercase shouldn't be asked. also, there is no randLetter, it is either lower or upper
-    for (i = 0; i < length; i++)
+    if (generatedPassword == NULL)
     {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
 
-        randDigit = (char)(rand() % 10);
-        randSpecialChar = (char)(rand() % 15 + 33);
-        randLowercase = (char)(rand() % 26 + 97);
-        randUppercase = (char)(rand() % 26 + 65);
+    int i = 0;
+    int charType = 0;
+    char newChar = 0;
 
-        charType = rand() % 4 + 1;
+    while (i < length)
+    {
+        charType = rand() % 4;
 
-        while (1)
+        switch (charType)
         {
-            switch (charType)
-            {
-            case 1:
-                if (qDigit == 1)
-                    generatedPassword[i] = randDigit;
-                break;
-            case 2:
-                if (qSpecialChar == 1)
-                    generatedPassword[i] = randSpecialChar;
-                break;
-            case 3:
-                if (qLowercase == 1)
-                    generatedPassword[i] = randLowercase;
-                break;
-            case 4:
-                if (qUpperCase == 1)
-                    generatedPassword[i] = randUppercase;
-                break;
-            }
-            if (generatedPassword[i] == '\0')
-                break;
+        case 0:
+            if (qDigit)
+                newChar = (char)(rand() % 10 + 48);
+            break;
+        case 1:
+            if (qLetter && qLowercase)
+                newChar = (char)(rand() % 26 + 97);
+            break;
+        case 2:
+            if (qLetter && qUpperCase)
+                newChar = (char)(rand() % 26 + 65);
+            break;
+        case 3:
+            if (qSpecialChar)
+                newChar = (char)(rand() % 15 + 33);
+            break;
+        }
+        if (newChar != 0)
+        {
+            generatedPassword[i] = newChar;
+            i++;
         }
     }
     generatedPassword[length] = '\0';
@@ -61,27 +76,31 @@ char *passwordGeneratorRecommended()
 {
 
     int length = 15;
+    char *generatedPassword = (char *)calloc(length + 1, sizeof(char));
+    if (generatedPassword == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
     int i;
     int charType;
-    char *generatedPassword = (char *)calloc(length + 1, sizeof(char));
-
     for (i = 0; i < length; i++)
     {
-        charType = rand() % 4 + 1;
+        charType = rand() % 4;
 
         switch (charType)
         {
+        case 0:
+            generatedPassword[i] = (char)(rand() % 10 + 48);
+            break;
         case 1:
-            generatedPassword[i] = (char)(rand() % 10 + 48); // Digit
+            generatedPassword[i] = (char)(rand() % 26 + 97);
             break;
         case 2:
-            generatedPassword[i] = (char)(rand() % 26 + 97); // Lowercase
+            generatedPassword[i] = (char)(rand() % 26 + 65);
             break;
         case 3:
-            generatedPassword[i] = (char)(rand() % 26 + 65); // Uppercase
-            break;
-        case 4:
-            generatedPassword[i] = (char)(rand() % 15 + 33); // SpecialChar
+            generatedPassword[i] = (char)(rand() % 15 + 33);
             break;
         }
     }
