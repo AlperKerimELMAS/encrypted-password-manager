@@ -7,8 +7,12 @@
 
 int *randomKeyGenerator(int length)
 {
-    srand(time(NULL));
     int *key = (int *)calloc(length, sizeof(int));
+    if (key == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
     int i;
     for (i = 0; i < length; i++)
         key[i] = rand() % 127 + 1;
@@ -21,10 +25,14 @@ int *randomShufflePatternGenerator(int length)
     int i, randomIndex, tempNumber;
 
     int *pattern = (int *)calloc(length, sizeof(int));
+    if (pattern == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
     for (i = 0; i < length; i++)
         pattern[i] = i;
 
-    srand(time(NULL));
     for (i = 0; i < length; i++)
     {
         randomIndex = rand() % length;
@@ -40,17 +48,27 @@ char *strEncryption(int id, char *str, int *keyForID, int *shufflePattern)
     int length = strlen(str);
 
     char *encryptedStr = (char *)calloc(length + 1, sizeof(char));
+    if (encryptedStr == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
     int i;
     for (i = 0; i < length; i++)
-        encryptedStr[i] = str[i] ^ keyForID[i + 1];
+        encryptedStr[i] = str[i] ^ keyForID[i];
 
     encryptedStr[length] = '\0';
 
     char *encryptedStrShuffled = (char *)calloc(length + 1, sizeof(char));
-
+    if (encryptedStrShuffled == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
     for (i = 0; i < length; i++)
         encryptedStrShuffled[i] = encryptedStr[shufflePattern[i]];
 
     encryptedStrShuffled[length] = '\0';
+    free(encryptedStr);
     return encryptedStrShuffled;
 }

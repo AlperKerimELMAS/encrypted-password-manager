@@ -28,7 +28,15 @@ char *deshuffler(char *str, int length, int *shufflePattern);
 
 char *writeArray(int *array, int length);
 int *readArray(char *array, int length);
-void readData(struct passwordLog **firstLog, char *path);
+void readData(struct passwordLog **firstLog, const char *path);
 void writeData(char *path, struct passwordLog *firstLog);
+
+char *passwordGenerator(int passwordGenerationFeatures[]);
+char *passwordGeneratorRecommended();
+
+void clearScanf();
+void clearList(struct passwordLog *firstLog);
+
+extern int numberOfLogs;
 
 #endif
