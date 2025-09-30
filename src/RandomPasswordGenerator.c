@@ -4,6 +4,7 @@
 
 char *passwordGenerator(int passwordGenerationFeatures[])
 {
+    int charType;
     int length = passwordGenerationFeatures[0];
     int qDigit = passwordGenerationFeatures[1];
     int qLetter = passwordGenerationFeatures[2];
@@ -13,7 +14,7 @@ char *passwordGenerator(int passwordGenerationFeatures[])
 
     char randDigit, randSpecialChar, randLowercase, randUppercase;
 
-    char *generatedPassword = (char *)calloc(length, sizeof(char));
+    char *generatedPassword = (char *)calloc(length + 1, sizeof(char));
     int i;
 
     // if the letter is selected, lowercase and uppercase shouldn't be asked. also, there is no randLetter, it is either lower or upper
@@ -24,7 +25,36 @@ char *passwordGenerator(int passwordGenerationFeatures[])
         randSpecialChar = (char)(rand() % 15 + 33);
         randLowercase = (char)(rand() % 26 + 97);
         randUppercase = (char)(rand() % 26 + 65);
+
+        charType = rand() % 4 + 1;
+
+        while (1)
+        {
+            switch (charType)
+            {
+            case 1:
+                if (qDigit == 1)
+                    generatedPassword[i] = randDigit;
+                break;
+            case 2:
+                if (qSpecialChar == 1)
+                    generatedPassword[i] = randSpecialChar;
+                break;
+            case 3:
+                if (qLowercase == 1)
+                    generatedPassword[i] = randLowercase;
+                break;
+            case 4:
+                if (qUpperCase == 1)
+                    generatedPassword[i] = randUppercase;
+                break;
+            }
+            if (generatedPassword[i] == '\0')
+                break;
+        }
     }
+    generatedPassword[length] = '\0';
+    return generatedPassword;
 }
 
 char *passwordGeneratorRecommended()
