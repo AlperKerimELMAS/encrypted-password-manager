@@ -36,7 +36,7 @@ char *passwordGenerator(int passwordGenerationFeatures[])
     }
 
     int i = 0;
-    int charType = 0;
+    charType = 0;
     char newChar = 0;
 
     while (i < length)
