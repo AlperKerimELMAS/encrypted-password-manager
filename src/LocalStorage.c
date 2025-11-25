@@ -89,7 +89,7 @@ void writeData(char *path, struct passwordLog *firstLog)
             numberOfWritten++;
         }
         fclose(fPtr);
-        print("%d logs successfully written to %s file", numberOfWritten, path);
+        printf("%d logs successfully written to %s file", numberOfWritten, path);
     }
 
     else
